@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link rel="stylesheet" type='text/css' href='assets/font-awesome/css/font-awesome.css'>
+	<script type="text/javascript" src="ajax.js"></script>
+</head>
+<style>
+
+	#container {
+	
+		width:700px;
+		margin: auto;
+	
+	}
+	
+	#header {
+	    width: 80%;
+	    min-height: 70px;
+	    overflow: hidden;
+	    display: block;
+	    background-color: #0071b5;
+	    border: 3px groove;
+	}
+	
+	#logo {
+	    width: 18%;
+	    float: left;
+	    color: white;
+	    font-size: 4em;
+	    margin-left: 2%;
+	    margin-top: 2%;
+	}
+	
+	
+	
+	#namelogo {
+	    width: 80%;
+	    float: left;
+	    text-align: center;
+	    font-family: fantasy;
+	    font-size: 2em;
+	    color: white;
+	}
+	
+	#musicplayer {
+		    border: 3px groove;
+		    margin-top: 2em;
+		    width: 80%;
+		    overflow: hidden;
+		    font-family: sans-serif;
+		    background-color: #3c3c3c;
+		    color: white;
+	}
+	
+	#musicpicture {
+	        width: 50%;
+		    display: block;
+		    margin: 0 auto;
+	}
+	
+	#musicplayerbuttons {
+	 	
+	 	padding: 0.3em;
+	    font-weight: bold;
+	}
+	
+	#musictitle {
+		display:block;
+		text-align:center;
+	}
+	
+	#musicduration {
+		display:block;
+		background-color:#0071b5;
+	}
+	
+	#musiccontrols {
+		display:block;
+		overflow:hidden;
+	
+	}
+	
+	#musictimeleft ,#musicplayerbuttons2,  #musiclength {
+		display:inline-block;
+		float:left;
+		width:33%;
+	
+	}
+	
+	
+	#buttonleft , #buttonstartstop , #buttonright {
+		margin-right:10%;
+		font-size:2em;
+	
+	}
+	
+	#musictimeleft {
+		text-align:left;
+	}
+	
+	#musiclength {
+		text-align:right;
+	}
+	
+	#musicplayerbuttons2 {
+		text-align:center;
+	}
+	
+	
+	
+	#musiccontainer {
+		border-left: 3px groove;
+	    border-right: 3px groove;
+	    border-top: 3px groove;
+	    width: 80%;
+	    margin-top: 2em;
+	    overflow: hidden;
+	    font-family: fantasy;
+	}
+	
+	.songcontainer {
+	    overflow: hidden;
+	    padding: 0.3em;
+	    border-bottom: 3px groove;
+    	background-color: #dfdee4;
+	}
+		    
+	.songname {
+		display:inline-block;
+		float:left;
+		width:90%;
+	}
+
+	#itagstop {
+		display: none;
+	}
+
+
+
+
+</style>
+<body>
+	<div id="container">
+		<div id="header">
+			<i id="logo" class="fa fa-music"></i>
+			<p id="namelogo">MusicCloud</p>
+		</div>
+		<div id="musicplayer">
+			<img id="musicpicture" src="media\Alborosie_2_Times_Revolution_(2011).jpg">
+			<div id="musicplayerbuttons">
+				<p id='musictitle'>Thievery Corporation - It Takes A Thief</p>
+				<p id='musicduration'>&nbsp;</p>
+				<div id='musiccontrols'>
+					<p id='musictimeleft'>03:42</p>
+					<div id='musicplayerbuttons2'>
+						<i id='buttonleft'class="fa fa-step-backward"></i>
+						<i id='buttonstartstop' class="fa fa-play"></i>
+						<i id='buttonright' class="fa fa-step-forward"></i>
+					</div>
+					<p id='musiclength'>03:42</p>
+				</div>
+			</div>
+		</div>
+
+
+
+
+
+	</div>
+
+
+</body>
+<script>
+
+
+
+	document.addEventListener('DOMContentLoaded' , function () {
+		Ajax.request('GET', 'transfer.php', true , function(response) {
+			var data = JSON.parse(response);
+
+			var divmusic = document.createElement('div');
+			divmusic.setAttribute('id' , 'musiccontainer');
+			var container = document.getElementById('container');
+			container.appendChild(divmusic);
+			document.body.appendChild(container);
+
+
+
+
+			for (var i = 0 ; i < data.length ; i++ ) {
+				var object=data[i];
+
+				var divsong = document.createElement('div');
+				divsong.setAttribute('class' , 'songcontainer');
+				divmusic.appendChild(divsong);
+
+				var p = document.createElement('p');
+				p.setAttribute('class' , 'songname');
+				p.innerHTML = parseInt(i+1)+'. '+object['artist']+' - '+object['song'];
+				divsong.appendChild(p);
+
+				var itagstart = document.createElement('i');
+				itagstart.setAttribute('id', 'itagstart');
+				itagstart.setAttribute('class', 'fa fa-play fa-2x');
+				itagstart.setAttribute('onclick', 'startsong(event)');
+				divsong.appendChild(itagstart);
+
+			/*	var itagstop = document.createElement('i');
+				itagstop .setAttribute('id', 'itagstop');
+				itagstop .setAttribute('class', 'fa fa-stop fa-2x');
+				itagstop .setAttribute('onclick', '');
+				divsong.appendChild(itagstop);
+
+
+				itagstop.appendChild(audio);
+
+                      */
+
+
+				var audio = document.createElement('audio');
+				audio.setAttribute('class', 'audio');
+				itagstart.appendChild(audio);
+
+
+
+				var source = document.createElement('source');
+				source.setAttribute('src','media/'+object['path']);
+				source.setAttribute('type','audio/mp3');
+				audio.appendChild(source);
+
+
+
+
+
+
+
+			}
+
+
+		});
+		});
+
+
+
+		function startsong(event){
+
+			var ccc	= event.target.firstElementChild;
+			ccc.play();
+
+			console.log('br');
+
+		/*	var audios = document.getElementsByTagName('audio');
+			for (var j = 0; j < audios.length; j++ ) {
+				if (audios[j] != event.target) {
+					audios[j].pause();
+				}
+			}*/
+
+		}
+
+
+
+	/opt/lampp/htdocs/Homeworks/Lecture-AJAX
+
+
+</script>
+</html>
